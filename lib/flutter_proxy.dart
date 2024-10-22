@@ -8,7 +8,7 @@ class FlutterProxy {
   static const MethodChannel _channel = const MethodChannel('flutter_proxy');
 
   /// ProxySetting
-  static Future<ProxySetting> get proxySetting async {
+  static Future<ProxySetting?> get proxySetting async {
     return _channel //
         .invokeMapMethod<String, dynamic>('getProxySetting')
         .then((e) => ProxySetting._fromMap(e ?? {}));
@@ -18,14 +18,14 @@ class FlutterProxy {
 /// ProxySetting
 class ProxySetting {
   /// host
-  String host;
+  String? host;
 
   /// port
   int? port;
 
   /// private
   ProxySetting._({
-    required this.host,
+    this.host,
     this.port,
   });
 
@@ -42,6 +42,6 @@ class ProxySetting {
 
   /// enabled
   bool get enabled =>
-      (host.isNotEmpty ?? false) && //
+      (host?.isNotEmpty ?? false) && //
       ((port ?? 0) > 0);
 }

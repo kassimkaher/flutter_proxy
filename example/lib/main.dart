@@ -1,6 +1,6 @@
-import 'package:flutter/material.dart';
 import 'dart:async';
 
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_proxy/flutter_proxy.dart';
 
@@ -24,7 +24,7 @@ class _MyAppState extends State<MyApp> {
   Future<void> initPlatformState() async {
     try {
       final settings = await FlutterProxy.proxySetting;
-      _proxySetting = '${settings.host}:${settings.port}';
+      _proxySetting = '${settings?.host}:${settings?.port}';
     } on PlatformException {
       _proxySetting = 'Failed to get proxy settings.';
     }
