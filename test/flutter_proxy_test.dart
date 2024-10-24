@@ -1,27 +1,29 @@
-import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_proxy/flutter_proxy.dart';
+import 'package:flutter_proxy/flutter_proxy_platform_interface.dart';
+import 'package:flutter_proxy/flutter_proxy_method_channel.dart';
+import 'package:plugin_platform_interface/plugin_platform_interface.dart';
+
+class MockFlutterProxyPlatform
+    with MockPlatformInterfaceMixin
+    implements FlutterProxyPlatform {
+
+  @override
+  Future<String?> getPlatformVersion() => Future.value('42');
+}
 
 void main() {
-  const MethodChannel channel = MethodChannel('flutter_proxy');
+  final FlutterProxyPlatform initialPlatform = FlutterProxyPlatform.instance;
 
-  TestWidgetsFlutterBinding.ensureInitialized();
-
-  setUp(() {
-    channel.setMockMethodCallHandler((MethodCall methodCall) async {
-      return <String, dynamic>{
-        'host': '192.168.1.9',
-        'port': 9909,
-      };
-    });
+  test('$MethodChannelFlutterProxy is the default instance', () {
+    expect(initialPlatform, isInstanceOf<MethodChannelFlutterProxy>());
   });
 
-  tearDown(() {
-    channel.setMockMethodCallHandler(null);
-  });
+  test('getPlatformVersion', () async {
+    FlutterProxy flutterProxyPlugin = FlutterProxy();
+    MockFlutterProxyPlatform fakePlatform = MockFlutterProxyPlatform();
+    FlutterProxyPlatform.instance = fakePlatform;
 
-  test('getProxySetting', () async {
-    final setting = await FlutterProxy.proxySetting;
-    expect(setting.enabled, true);
+    expect(await flutterProxyPlugin.getPlatformVersion(), '42');
   });
 }
